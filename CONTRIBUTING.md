@@ -11,7 +11,7 @@ keyed off the descriptor.
 
 - **Import `tai42_contract` only.** No skeleton, no other tai-* package:
   ```bash
-  grep -rnE '(from|import)\s+tai_' src/ | grep -v tai42_contract   # only this plugin's lines
+  grep -rnE '(from|import)\s+tai(42)?_' src/ | grep -v tai42_contract   # only this plugin's lines
   grep -rn 'tai42_skeleton' src/                                   # must be empty
   ```
 - **The plugin ships pure data, no behavior.** `core/connector.py` builds a
@@ -25,6 +25,30 @@ keyed off the descriptor.
 
 - `tai42_connector.google.core.connector` — `build_descriptor()` (pure) + the
   manifest-load `register_connector(...)` call.
+
+## Naming
+
+PyPI is a flat namespace with no owner in the path, so distributions carry the
+`tai42-` prefix. GitHub repositories keep their `tai-` names, because the
+`tai42ai` organisation already namespaces them. Import packages follow the
+distribution.
+
+| Surface | Form |
+| --- | --- |
+| Distribution — PyPI, `pip install`, dependency pins | `tai42-<name>` |
+| Import package | `tai42_<name>` |
+| GitHub repository and sibling checkout directory | `tai-<name>` |
+
+So a dependency is declared as `tai42-<name>` but resolved from `../tai-<name>`
+during local development, and both spellings are correct in their own context.
+
+Connectors are the one exception to the import-package form: they share the
+`tai42_connector` namespace package, so this distribution imports as
+`tai42_connector.google` rather than `tai42_connector_google`.
+
+Some surfaces are deliberately neither, and must not be renamed: the `tai` CLI
+command (`tai42` is an alias), the Prometheus metric namespace (`tai_tool_*`),
+`TAI_*` environment variables, and the `tai-plugin.yml` descriptor filename.
 
 ## Dev
 
