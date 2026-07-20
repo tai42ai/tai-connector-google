@@ -66,12 +66,6 @@ filterwarnings = ["error"]
 [tool.uv]
 cache-keys = [{ file = "pyproject.toml" }]
 
-# Dev-only: resolve tai-contract from the sibling checkout. The published version
-# floor in [project].dependencies is what the shipped wheel declares; this source
-# override is not part of wheel metadata.
-[tool.uv.sources]
-tai-contract = { path = "../tai-contract", editable = true }
-
 [tool.ruff]
 src = ["src"]
 target-version = "py313"
