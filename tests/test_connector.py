@@ -4,7 +4,7 @@ The descriptor must construct + re-validate against the contract model (the
 pkg-launched stdio sub-services carry an ``entry_point`` and no ``mcp_server``,
 which exercises the launch-spec XOR and the pkg_manager-required rules), and
 loading the module must register exactly that descriptor through the bound
-``tai_app`` handle. The ``conftest`` recording fake stands in for the skeleton.
+``tai42_app`` handle. The ``conftest`` recording fake stands in for the skeleton.
 """
 
 from __future__ import annotations
@@ -13,10 +13,10 @@ import importlib
 from collections.abc import Iterator
 
 import pytest
-from tai_contract.app import tai_app
-from tai_contract.connectors.providers import ProviderDescriptor
+from tai42_contract.app import tai42_app
+from tai42_contract.connectors.providers import ProviderDescriptor
 
-from tai_connector.google.core import connector
+from tai42_connector.google.core import connector
 from tests import conftest
 
 # entry_point -> scopes for each pkg-launched stdio sub-service.
@@ -67,7 +67,7 @@ def restore_app_binding() -> Iterator[None]:
     """Snapshot the bound app impl and the recorded registrations, then restore
     both and reload the connector module on teardown.
 
-    The wrapped test rebinds ``tai_app`` to a throwaway fake and reloads the
+    The wrapped test rebinds ``tai42_app`` to a throwaway fake and reloads the
     connector to re-run its import-time registration. Without this fixture that
     binding — and the extra registration the reload-back appends — would leak into
     every later test. Restoring the bound impl and ``conftest.REGISTERED``
@@ -75,14 +75,14 @@ def restore_app_binding() -> Iterator[None]:
 
     The bound impl is read via ``object.__getattribute__`` — the same way the
     forwarding handle reads its own ``_impl`` slot — because the public
-    ``tai_app`` type exposes only ``bind`` and the app namespaces, not the slot.
+    ``tai42_app`` type exposes only ``bind`` and the app namespaces, not the slot.
     """
-    saved_impl = object.__getattribute__(tai_app, "_impl")
+    saved_impl = object.__getattribute__(tai42_app, "_impl")
     saved_registered = list(conftest.REGISTERED)
     try:
         yield
     finally:
-        tai_app.bind(saved_impl)
+        tai42_app.bind(saved_impl)
         importlib.reload(connector)
         conftest.REGISTERED[:] = saved_registered
 
@@ -188,7 +188,7 @@ def test_registration_invokes_handle_with_descriptor(restore_app_binding: None) 
     class FakeApp:
         connectors = FakeConnectors()
 
-    tai_app.bind(FakeApp())
+    tai42_app.bind(FakeApp())
     importlib.reload(connector)
 
     assert len(captured) == 1

@@ -1,4 +1,4 @@
-# tai-connector-google
+# tai42-connector-google
 
 [![CI](https://github.com/tai42ai/tai-connector-google/actions/workflows/ci.yml/badge.svg)](https://github.com/tai42ai/tai-connector-google/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -6,9 +6,9 @@
 The Google OAuth connector provider for the TAI ecosystem — Gmail, Calendar, and
 Drive over stdio MCP servers.
 
-A pure plugin: its **only** dependency is `tai-contract`. It declares one
-`ProviderDescriptor` and registers it through the `tai_app`
-handle when the manifest loads `tai_connector.google.core.connector`. It carries
+A pure plugin: its **only** dependency is `tai42-contract`. It declares one
+`ProviderDescriptor` and registers it through the `tai42_app`
+handle when the manifest loads `tai42_connector.google.core.connector`. It carries
 **no** OAuth, probe, or launch code — the skeleton connector engine drives all of
 that generically, keyed off the descriptor. It never imports the skeleton.
 
@@ -18,7 +18,7 @@ TAI is an open-source runtime for MCP tools, agents, and workflows. A connector
 provider is a pure-data plugin describing how the runtime connects a third-party
 service — OAuth endpoints, scopes, and the MCP servers that expose it as tools.
 This package is one such provider (Google); a sibling backs the same contract
-for Atlassian (`tai-connector-atlassian`). The ecosystem is open-ended: any
+for Atlassian (`tai42-connector-atlassian`). The ecosystem is open-ended: any
 package can declare a provider, so this repo is this provider's own full doc
 home, and the documentation site covers the platform-level story:
 
@@ -47,21 +47,21 @@ home, and the documentation site covers the platform-level story:
 
 ## How it loads
 
-Add `tai_connector.google.core.connector` to the manifest. Importing it calls
-`tai_app.connectors.register_connector(descriptor)` through the bound handle —
+Add `tai42_connector.google.core.connector` to the manifest. Importing it calls
+`tai42_app.connectors.register_connector(descriptor)` through the bound handle —
 the same manifest + handle mechanism as the storage / backend plugins, but a
 plain call because a connector ships pure data, not behavior.
 
 ## Install
 
 Requires **Python 3.13+**. Nothing is on PyPI yet, so install from source — clone
-this repo alongside your `tai-skeleton` checkout and add it as an editable
+this repo alongside your `tai42-skeleton` checkout and add it as an editable
 dependency of the environment that runs the server:
 
 ```bash
 git clone https://github.com/tai42ai/tai-connector-google
 cd tai-skeleton   # or your own app checkout
-uv add --editable ../tai-connector-google   # once published: uv add tai-connector-google
+uv add --editable ../tai-connector-google   # once published: uv add tai42-connector-google
 ```
 
 ## Development

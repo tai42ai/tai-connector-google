@@ -1,8 +1,8 @@
 """Google connector provider — pure descriptor + manifest-load registration.
 
 Declares the Google OAuth provider (Gmail, Calendar, Drive) as a single pure
-:class:`~tai_contract.connectors.providers.ProviderDescriptor` and registers it
-through the ``tai_app`` contract handle when the manifest loads this module.
+:class:`~tai42_contract.connectors.providers.ProviderDescriptor` and registers it
+through the ``tai42_app`` contract handle when the manifest loads this module.
 
 The plugin carries no OAuth, probe, or launch behavior — all of that is generic
 in the skeleton connector engine, keyed off the descriptor. Each sub-service is a
@@ -24,8 +24,8 @@ don't.
 
 from __future__ import annotations
 
-from tai_contract.app import tai_app
-from tai_contract.connectors.providers import (
+from tai42_contract.app import tai42_app
+from tai42_contract.connectors.providers import (
     OAuthEndpoints,
     ProviderDescriptor,
     SubServiceDescriptor,
@@ -106,6 +106,6 @@ def build_descriptor() -> ProviderDescriptor:
 
 
 # Manifest-load registration: importing this module registers the provider through
-# the bound ``tai_app`` handle. A connector ships pure data, so this is a plain
+# the bound ``tai42_app`` handle. A connector ships pure data, so this is a plain
 # call (not a decorator like the storage/backend plugins, which register a class).
-tai_app.connectors.register_connector(build_descriptor())
+tai42_app.connectors.register_connector(build_descriptor())

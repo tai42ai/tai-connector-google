@@ -3,9 +3,9 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tai-connector-google"
+name = "tai42-connector-google"
 version = "0.1.0"
-description = "Google (Gmail, Calendar, Drive) OAuth connector provider for the TAI ecosystem. Pure descriptor data; depends only on tai-contract."
+description = "Google (Gmail, Calendar, Drive) OAuth connector provider for the TAI ecosystem. Pure descriptor data; depends only on tai42-contract."
 readme = "README.md"
 requires-python = ">=3.13"
 license = "Apache-2.0"
@@ -24,9 +24,9 @@ classifiers = [
 ]
 dependencies = [
     # The pure interface contract — this plugin's only dependency. It declares a
-    # ProviderDescriptor and registers it via the tai_app handle; it never imports
+    # ProviderDescriptor and registers it via the tai42_app handle; it never imports
     # the skeleton or any engine code.
-    "tai-contract>=0.1,<0.2",
+    "tai42-contract>=0.1,<0.2",
 ]
 
 [project.urls]
@@ -53,10 +53,10 @@ package-dir = { "" = "src" }
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = true
-include = ["tai_connector*"]
+include = ["tai42_connector*"]
 
 [tool.setuptools.package-data]
-"tai_connector.google" = ["py.typed", "tai-plugin.yml"]
+"tai42_connector.google" = ["py.typed", "tai-plugin.yml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -66,6 +66,12 @@ filterwarnings = ["error"]
 [tool.uv]
 cache-keys = [{ file = "pyproject.toml" }]
 
+
+# The version floors in [project] are the compatibility contract; these path
+# sources resolve the sibling checkouts while the packages are unpublished.
+# They are not part of wheel metadata.
+[tool.uv.sources]
+tai42-contract = { path = "../tai-contract", editable = true }
 [tool.ruff]
 src = ["src"]
 target-version = "py313"
@@ -75,11 +81,11 @@ line-length = 120
 select = ["E", "W", "F", "I", "UP", "B", "C4", "SIM", "PIE", "PT", "RUF", "TID"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
-"tai_kit".msg = "tai-connector-google is a pure-data plugin: it never imports tai-kit."
-"tai_skeleton".msg = "tai-connector-google is a pure-data plugin: it never imports tai-skeleton."
+"tai42_kit".msg = "tai42-connector-google is a pure-data plugin: it never imports tai42-kit."
+"tai42_skeleton".msg = "tai42-connector-google is a pure-data plugin: it never imports tai42-skeleton."
 
 [tool.coverage.run]
-source = ["tai_connector"]
+source = ["tai42_connector"]
 
 [tool.coverage.report]
 fail_under = 97
@@ -88,6 +94,6 @@ fail_under = 97
 include = ["src", "tests"]
 pythonVersion = "3.13"
 typeCheckingMode = "strict"
-# tai-contract resolves via a dev-time editable path install pyright can't follow;
+# tai42-contract resolves via a dev-time editable path install pyright can't follow;
 # a missing-import is a warning, not an error.
 reportMissingImports = "warning"

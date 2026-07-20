@@ -7,11 +7,11 @@ import tomllib
 from pathlib import Path
 
 import yaml
-from tai_contract.plugins import PluginSpec
+from tai42_contract.plugins import PluginSpec
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _ROOT_SPEC = _REPO_ROOT / "tai-plugin.yml"
-_PACKAGED_SPEC = _REPO_ROOT / "src" / "tai_connector" / "google" / "tai-plugin.yml"
+_PACKAGED_SPEC = _REPO_ROOT / "src" / "tai42_connector" / "google" / "tai-plugin.yml"
 _SPEC_FILENAME = "tai-plugin.yml"
 
 
@@ -38,7 +38,7 @@ def test_packaged_spec_is_declared_in_package_data():
     pyproject = tomllib.loads((_REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     package_data = pyproject["tool"]["setuptools"]["package-data"]
     owners = [key for key, files in package_data.items() if _SPEC_FILENAME in files]
-    assert owners == ["tai_connector.google"]
+    assert owners == ["tai42_connector.google"]
 
 
 def test_packaged_copy_is_identical_to_the_root_spec():

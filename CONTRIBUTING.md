@@ -1,29 +1,29 @@
-# Contributing to tai-connector-google
+# Contributing to tai42-connector-google
 
-`tai-connector-google` is a pure connector **provider plugin**: it declares one
+`tai42-connector-google` is a pure connector **provider plugin**: it declares one
 `ProviderDescriptor` (the Google provider — Gmail, Calendar, Drive) and registers
-it through the `tai_app` contract handle when the manifest loads it. The hard rule:
-**its only dependency is `tai-contract`** — no `tai-skeleton`, no other tai-*, no
+it through the `tai42_app` contract handle when the manifest loads it. The hard rule:
+**its only dependency is `tai42-contract`** — no `tai42-skeleton`, no other tai-*, no
 engine code. All OAuth / probe / launch behavior is generic in the skeleton engine,
 keyed off the descriptor.
 
 ## Ground rules
 
-- **Import `tai_contract` only.** No skeleton, no other tai-* package:
+- **Import `tai42_contract` only.** No skeleton, no other tai-* package:
   ```bash
-  grep -rnE '(from|import)\s+tai_' src/ | grep -v tai_contract   # only this plugin's lines
-  grep -rn 'tai_skeleton' src/                                   # must be empty
+  grep -rnE '(from|import)\s+tai_' src/ | grep -v tai42_contract   # only this plugin's lines
+  grep -rn 'tai42_skeleton' src/                                   # must be empty
   ```
 - **The plugin ships pure data, no behavior.** `core/connector.py` builds a
   validated `ProviderDescriptor` and calls
-  `tai_app.connectors.register_connector(...)` at import — a plain call, not a
+  `tai42_app.connectors.register_connector(...)` at import — a plain call, not a
   decorator (the storage/backend plugins decorate a class because they ship
   behavior; a connector does not).
 - **Typed package** (`py.typed`). Pyright runs with 0 errors.
 
 ## Layout
 
-- `tai_connector.google.core.connector` — `build_descriptor()` (pure) + the
+- `tai42_connector.google.core.connector` — `build_descriptor()` (pure) + the
   manifest-load `register_connector(...)` call.
 
 ## Dev

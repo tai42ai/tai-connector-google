@@ -1,18 +1,18 @@
 name: Feature request
-description: Propose an addition or change to the tai-connector-google descriptor
+description: Propose an addition or change to the tai42-connector-google descriptor
 labels: ["enhancement"]
 body:
   - type: textarea
     id: description
     attributes:
       label: Description
-      description: What should be added or changed, and what problem does it solve? Remember the ground rule — pure descriptor data only, no logic, depends on tai-contract alone.
+      description: What should be added or changed, and what problem does it solve? Remember the ground rule — pure descriptor data only, no logic, depends on tai42-contract alone.
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: tai-connector-google version
+      label: tai42-connector-google version
       description: The version you are using, if relevant.
       placeholder: "0.1.0"
     validations:
