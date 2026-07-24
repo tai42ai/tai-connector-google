@@ -1,11 +1,4 @@
-"""Tests for the Google connector descriptor and its manifest-load registration.
-
-The descriptor must construct + re-validate against the contract model (the
-pkg-launched stdio sub-services carry an ``entry_point`` and no ``mcp_server``,
-which exercises the launch-spec XOR and the pkg_manager-required rules), and
-loading the module must register exactly that descriptor through the bound
-``tai42_app`` handle. The ``conftest`` recording fake stands in for the skeleton.
-"""
+"""Tests for the Google connector descriptor and its manifest-load registration."""
 
 from __future__ import annotations
 
@@ -64,19 +57,10 @@ EXPECTED_DISPLAY = {
 
 @pytest.fixture
 def restore_app_binding() -> Iterator[None]:
-    """Snapshot the bound app impl and the recorded registrations, then restore
-    both and reload the connector module on teardown.
-
-    The wrapped test rebinds ``tai42_app`` to a throwaway fake and reloads the
-    connector to re-run its import-time registration. Without this fixture that
-    binding — and the extra registration the reload-back appends — would leak into
-    every later test. Restoring the bound impl and ``conftest.REGISTERED``
-    leaves global state exactly as the suite found it, order-independently.
-
-    The bound impl is read via ``object.__getattribute__`` — the same way the
-    forwarding handle reads its own ``_impl`` slot — because the public
-    ``tai42_app`` type exposes only ``bind`` and the app namespaces, not the slot.
-    """
+    """Snapshot the bound app impl and recorded registrations, then restore both
+    and reload the connector on teardown so a test's rebind does not leak into
+    later tests. The impl is read via ``object.__getattribute__`` — the public
+    handle exposes no accessor for its ``_impl`` slot."""
     saved_impl = object.__getattribute__(tai42_app, "_impl")
     saved_registered = list(conftest.REGISTERED)
     try:
@@ -109,9 +93,8 @@ def test_descriptor_constructs_and_validates() -> None:
 
 
 def test_descriptor_passes_contract_validation() -> None:
-    """Re-validating a dump re-runs every field/model validator — the launch-spec
-    XOR, the pkg_manager-required rule, and the oauth invariants — proving the
-    built descriptor is contract-valid, not merely constructible."""
+    """Re-validating a dump re-runs every field/model validator, proving the
+    descriptor is contract-valid, not merely constructible."""
     descriptor = connector.build_descriptor()
     revalidated = ProviderDescriptor.model_validate(descriptor.model_dump())
     assert revalidated == descriptor
@@ -177,8 +160,7 @@ def test_registration_recorded_on_import() -> None:
 
 def test_registration_invokes_handle_with_descriptor(restore_app_binding: None) -> None:
     """Reloading re-runs the module-level registration against a fresh recording
-    fake — exactly what the manifest triggers when it loads the plugin. The
-    ``restore_app_binding`` fixture undoes the rebind + reload afterward."""
+    fake. The ``restore_app_binding`` fixture undoes the rebind afterward."""
     captured: list[ProviderDescriptor] = []
 
     class FakeConnectors:

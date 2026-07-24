@@ -1,12 +1,6 @@
-"""Bind a fake ``tai42_app`` so the connector module's import-time registration
-runs without the skeleton.
-
-``tai42_connector.google.core.connector`` calls
-``tai42_app.connectors.register_connector(...)`` at import. The runtime would have
-bound the concrete app first; here a recording fake stands in, capturing the
-descriptor the plugin registers so the tests can assert on it. Binding happens at
-conftest import — before any test module imports the connector.
-"""
+"""Bind a recording fake ``tai42_app`` at conftest import, before any test
+imports the connector, so its import-time ``register_connector`` call is captured
+for assertions."""
 
 from __future__ import annotations
 

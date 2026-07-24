@@ -1,25 +1,12 @@
-"""Google connector provider — pure descriptor + manifest-load registration.
+"""Google connector provider — Gmail, Calendar, and Drive.
 
-Declares the Google OAuth provider (Gmail, Calendar, Drive) as a single pure
-:class:`~tai42_contract.connectors.providers.ProviderDescriptor` and registers it
-through the ``tai42_app`` contract handle when the manifest loads this module.
+Declares one :class:`~tai42_contract.connectors.providers.ProviderDescriptor` and
+registers it through the ``tai42_app`` handle when the module loads; all
+OAuth/probe/launch behaviour is generic in the engine, keyed off the descriptor.
+Each sub-service is a pkg-launched stdio MCP server named by its ``entry_point``.
 
-The plugin carries no OAuth, probe, or launch behavior — all of that is generic
-in the skeleton connector engine, keyed off the descriptor. Each sub-service is a
-pkg-launched stdio MCP server declared by its ``entry_point`` (the distribution /
-console-script name); the engine resolver synthesizes the launch command from the
-provider's ``pkg_manager`` + ``pkg_version``. OAuth client credentials are named
-by env var (``client_id_env`` / ``client_secret_env``); the engine resolves them
-from the process environment at connect time.
-
-Scope sensitivity (Google's own classification) drives what verification the
-provider's OAuth app must clear. ``gmail.readonly`` and ``drive.readonly`` are
-**restricted** scopes — they require Google's annual CASA third-party security
-assessment. ``gmail.send`` and ``calendar.events`` are **sensitive** scopes —
-they require Google app verification. ``openid``, ``email``, and ``drive.file``
-are non-sensitive. Keep Drive on ``drive.readonly`` + ``drive.file``: broadening
-to the full ``drive`` scope would widen data access to the user's entire Drive —
-don't.
+Keep Drive scoped to ``drive.readonly`` + ``drive.file`` — never the full ``drive``
+scope, which would expose the user's entire Drive.
 """
 
 from __future__ import annotations
@@ -49,9 +36,8 @@ def build_descriptor() -> ProviderDescriptor:
         ),
         client_id_env="CONNECTORS_GOOGLE_CLIENT_ID",
         client_secret_env="CONNECTORS_GOOGLE_CLIENT_SECRET",
-        # Each sub-service runs its own stdio MCP-server process. The package is
-        # launched by ``pkg_manager`` (uvx — the servers are Python distributions);
-        # ``pkg_version`` left unset means the resolver launches the latest.
+        # Sub-services run as stdio MCP-server processes via uvx; unset
+        # ``pkg_version`` means the resolver launches the latest.
         pkg_manager="uvx",
         sub_services={
             "gmail": SubServiceDescriptor(
@@ -94,9 +80,8 @@ def build_descriptor() -> ProviderDescriptor:
                 entry_point="tai-mcp-google-drive",
             ),
         },
-        # ``access_type``/``prompt`` make Google issue a refresh token on first
-        # consent; ``include_granted_scopes`` enables incremental authorization so
-        # scopes granted in earlier consents carry forward into each new request.
+        # ``access_type``/``prompt`` force a refresh token on first consent;
+        # ``include_granted_scopes`` enables incremental authorization.
         extra_authorize_params={
             "access_type": "offline",
             "prompt": "consent",
@@ -105,7 +90,5 @@ def build_descriptor() -> ProviderDescriptor:
     )
 
 
-# Manifest-load registration: importing this module registers the provider through
-# the bound ``tai42_app`` handle. A connector ships pure data, so this is a plain
-# call (not a decorator like the storage/backend plugins, which register a class).
+# Importing this module registers the provider through the bound ``tai42_app`` handle.
 tai42_app.connectors.register_connector(build_descriptor())
