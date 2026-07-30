@@ -5,7 +5,11 @@
   "packages": {
     ".": {
       "skip-changelog": true,
-      "package-name": "tai42-connector-google"
+      "package-name": "tai42-connector-google",
+      "extra-files": [
+        "tai-plugin.yml",
+        "src/tai42_connector/google/tai-plugin.yml"
+      ]
     }
   }
 }
